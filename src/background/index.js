@@ -402,4 +402,7 @@ let getSr = {
 }
 
 Kaze.Init();
-window.Kaze = Kaze;
+
+export default {
+    Kaze
+}
