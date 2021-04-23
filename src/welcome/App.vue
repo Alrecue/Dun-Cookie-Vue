@@ -11,7 +11,10 @@
         <div class="info-title">让我们一起守护自由的兔兔吧！</div>
       </div>
       <el-divider></el-divider>
-      <div>这是一个内测版本，我们准备在周年庆前夕放出正式版。 如果有意见或建议或想法请在群内反馈</div>
+      <div>
+        这是一个内测版本，我们准备在周年庆前夕放出正式版。
+        如果有意见或建议或想法请在群内反馈
+      </div>
       <el-divider></el-divider>
       <div>你可以点击图标查看蹲饼列表</div>
       <el-divider></el-divider>
@@ -77,21 +80,9 @@ export default {
   computed: {},
   methods: {
     init() {
-      this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
-      this.version = this.getBackgroundPage.Kaze.version;
-      this.dunTime = this.getBackgroundPage.Kaze.dunTime;
-      this.dunFristTime = this.getBackgroundPage.Kaze.dunFristTime;
-      this.feedbackInfo = this.getBackgroundPage.Kaze.feedbackInfo;
-      chrome.storage.local.get(["setting"], (result) => {
-        this.setting = result.setting;
-      });
-      setInterval(() => {
-        this.dunTime = this.getBackgroundPage.Kaze.dunTime;
-        this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
-        this.nextdunTime = new Date(
-          (Date.parse(this.dunTime) / 1000 + this.setting.time) * 1000
-        );
-      }, this.setting.time);
+      let state = this.$store.state;
+      this.version = state.version;
+      this.feedbackInfo = state.feedbackInfo;
     },
     toSetting() {
       chrome.tabs.create({

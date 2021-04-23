@@ -16,7 +16,7 @@
         </div>
         <div class="info-time">本次蹲饼时间：{{ timespanToDay(dunTime) }}</div>
         <div class="info-time">
-          下次蹲饼时间：{{ timespanToDay(nextdunTime) }}
+          <!-- 下次蹲饼时间：{{ timespanToDay(nextdunTime) }} -->
         </div>
       </div>
       <el-divider></el-divider>
@@ -80,7 +80,7 @@
           title="有些数据比如通讯组是只有日期没有时间的，在数据列表内无法排序，所以在此统一这些卡片在当天信息流内是置顶还是置底。
           保存的时候可能会因为数据排序改变而发送错误的推送，请忽略！"
         >
-          <el-radio-group v-model="setting.isTop" @change="test">
+          <el-radio-group v-model="setting.isTop">
             <el-radio :label="true">当天内容顶部</el-radio>
             <el-radio :label="false">当天内容底部</el-radio>
           </el-radio-group>
@@ -90,9 +90,7 @@
         </div>
       </el-form>
       <el-divider></el-divider>
-      <div v-html="feedbackInfo">
-        
-      </div>
+      <div v-html="feedbackInfo"></div>
     </el-card>
   </div>
 </template>
@@ -106,9 +104,8 @@ export default {
 
   data() {
     return {
-      getBackgroundPage: chrome.extension.getBackgroundPage(),
       version: "蹲饼",
-      feedbackInfo:'',
+      feedbackInfo: "",
       dunIndex: 0,
       dunTime: new Date(),
       dunFristTime: new Date(),
@@ -124,44 +121,42 @@ export default {
   },
   computed: {},
   methods: {
-    test(value){debugger;},
     init() {
-      this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
-      this.version = this.getBackgroundPage.Kaze.version;
-      this.feedbackInfo = this.getBackgroundPage.Kaze.feedbackInfo;
-      this.dunTime = this.getBackgroundPage.Kaze.dunTime;
-      this.dunFristTime = this.getBackgroundPage.Kaze.dunFristTime;
-
-      chrome.storage.local.get(["setting"], (result) => {
-        this.setting = result.setting;
-      });
+      let state = this.$store.state;
+      this.dunIndex = state.dunIndex;
+      this.version = state.version;
+      this.feedbackInfo = state.feedbackInfo;
+      this.dunTime = state.dunTime;
+      this.dunFristTime = state.dunFristTime;
+      this.setting = state.setting;
+      
       setInterval(() => {
-        this.dunTime = this.getBackgroundPage.Kaze.dunTime;
-        this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
+        this.dunTime = state.dunTime;
+        this.dunIndex = state.dunIndex;
         this.nextdunTime = new Date(
           (Date.parse(this.dunTime) / 1000 + this.setting.time) * 1000
         );
       }, this.setting.time);
     },
     save() {
-      chrome.storage.local.set(
-        {
-          setting: this.setting,
-        },
-        () => {
-          this.getBackgroundPage.clearInterval(
-            this.getBackgroundPage.Kaze.setIntervalindex
-          );
-          this.getBackgroundPage.Kaze.SetInterval(this.setting.time);
-          this.getBackgroundPage.Kaze.setting = this.setting;
-          this.getBackgroundPage.Kaze.GetData();
-          this.$message({
-            center: true,
-            message: "保存成功",
-            type: "success",
-          });
-        }
-      );
+      // chrome.storage.local.set(
+      //   {
+      //     setting: this.setting,
+      //   },
+      //   () => {
+      //     this.getBackgroundPage.clearInterval(
+      //       state.setIntervalindex
+      //     );
+      //     state.SetInterval(this.setting.time);
+      //     state.setting = this.setting;
+      //     state.GetData();
+      //     this.$message({
+      //       center: true,
+      //       message: "保存成功",
+      //       type: "success",
+      //     });
+      //   }
+      // );
     },
     timespanToDay(date) {
       if (date == "计算中") {

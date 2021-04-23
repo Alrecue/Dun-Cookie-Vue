@@ -18,6 +18,7 @@ const chainWebpack = config => {
         { from: 'src/assets', to: 'assets' },
         { from: 'src/manifest.json', to: 'manifest.json', flatten: true },
         { from: 'src/test', to: 'test' },
+        { from: 'src/store', to: 'store' }
     ]]);
 
     if (isDevMode) {

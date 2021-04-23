@@ -51,7 +51,7 @@
           size="medium"
           type="primary"
           @click="openUrl('https://mapcn.ark-nights.com')"
-           title="by Houdou"
+          title="by Houdou"
           >PRTS.Map</el-button
         >
         <el-button
@@ -67,7 +67,7 @@
           title="by 一只灰喵"
           >明日方舟工具箱</el-button
         >
-         <el-button
+        <el-button
           size="medium"
           type="primary"
           @click="openUrl('https://opssr.net/')"
@@ -182,12 +182,11 @@
 export default {
   name: "app",
   mounted() {
-    this.init();
+    this.init()
   },
 
   data() {
     return {
-      getBackgroundPage: chrome.extension.getBackgroundPage(),
       cardlist: [],
       version: "蹲饼",
       dunIndex: 0,
@@ -201,14 +200,15 @@ export default {
   computed: {},
   methods: {
     init() {
-      this.version = `蹲饼 V${this.getBackgroundPage.Kaze.version}`;
-      this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
+      let state = this.$store.state;
+      this.version = `蹲饼 V${state.version}`;
+      this.dunIndex = state.dunIndex;
       this.getbackgroundData();
-      this.setting = this.getBackgroundPage.Kaze.setting;
+      this.setting = state.setting;
       this.fontSizeClass = this.setting.fontsize;
       setInterval(() => {
         this.getbackgroundData();
-        this.dunIndex = this.getBackgroundPage.Kaze.dunIndex;
+        this.dunIndex = state.dunIndex;
       }, this.setting.time * 500);
     },
     changeShowAllImage(img) {
@@ -222,15 +222,9 @@ export default {
       }
     },
     getbackgroundData() {
-      let {
-        weibo = [],
-        cho3 = [],
-        yj = [],
-        bili = [],
-        ys3 = [],
-        sr = [],
-      } = this.getBackgroundPage.Kaze.cardlistdm;
-      this.cardlist = [...weibo, ...cho3, ...yj, ...bili, ...ys3, ...sr]
+      console.log(this.$store.state.cardListDM);
+      this.cardlist = Object.values(this.$store.state.cardListDM)
+        .reduce((acc, cur) => [...acc, ...cur], [])
         .map((x) => {
           x.dynamicInfo = x.dynamicInfo.replace(/\n/g, "<br/>");
           return x;
@@ -238,7 +232,7 @@ export default {
         .sort((x, y) => y.time - x.time);
     },
     reload() {
-      this.getBackgroundPage.Kaze.GetData();
+      // this.getBackgroundPage.GetData();
       this.isReload = true;
       this.drawer = false;
       this.$message({
