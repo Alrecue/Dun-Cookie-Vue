@@ -4,20 +4,22 @@
 	"version": "2.0.14",
 	"description": "一起监视自由的兔兔。明日方舟兔兔发布动态发布时间越来越奇怪了，我每天下午4点刷都刷不出来，怎么办呢？写一个蹲饼器盯着兔兔看！",
 	"author": "Kaze",
+	"default_locale": "zh_CN",
 	"icons": {
-		"48": "assets/image/icon.png",
-		"128": "assets/image/icon.png"
+		"48": "icons/icon.png",
+		"128": "icons/icon.png"
 	},
 	"browser_action": {
-		"default_icon": "assets/image/icon.png",
-		"default_popup": "./popup.html"
+		"default_icon": "icons/icon.png",
+		"default_popup": "popup.html"
 	},
 	"background": {
 		"scripts": [
-			"background.js"
+			"js/background.js"
 		],
 		"persistent": true
 	},
+	"content_scripts": [],
 	"permissions": [
 		"clipboardWrite",
 		"background",
@@ -31,7 +33,7 @@
 		"http://*.sinaimg.cn/*"
 	],
 	"options_ui": {
-		"page": "./options.html"
+		"page": "options.html"
 	},
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

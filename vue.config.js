@@ -1,77 +1,30 @@
-const chainWebpack = require('./chainWebpack.config.js');
-const backgroundMode = process.env.BACKGROUND_MODE;
-const devtoolMode = process.env.DEVTOOL_MODE;
-const newtabMode = process.env.NEWTAB_MODE;
-
-const config = {
-    devServer: {
-        writeToDisk: true,
-        hot: false,
-        disableHostCheck: true,
+module.exports = {
+  pages: {
+    popup: {
+      template: 'public/browser-extension.html',
+      entry: './src/popup/main.js',
+      title: 'Popup'
     },
-    filenameHashing: false,
-    pages: {
-        options: {
-            entry: 'src/options/index.js',
-            template: 'public/index.html',
-            filename: 'options.html',
-            title: '设置蹲饼器',
-            chunks: ['chunk-vendors', 'chunk-common', 'options'],
-        },
-        popup: {
-            entry: 'src/popup/index.js',
-            template: 'public/index.html',
-            filename: 'popup.html',
-            title: 'Popup',
-            chunks: ['chunk-vendors', 'chunk-common', 'popup'],
-        },
-        welcome: {
-            entry: 'src/welcome/index.js',
-            template: 'public/index.html',
-            filename: 'welcome.html',
-            title: '欢迎使用蹲饼',
-            chunks: ['chunk-vendors', 'chunk-common', 'welcome'],
-        },
-        update: {
-            entry: 'src/update/index.js',
-            template: 'public/index.html',
-            filename: 'update.html',
-            title: '蹲饼这次更新了什么？',
-            chunks: ['chunk-vendors', 'chunk-common', 'update'],
-        },
-    },
-    css: {
-        extract: true,
-    },
-    chainWebpack,
-}
-
-if (backgroundMode === 'html') {
-    config.pages['background'] = {
-        entry: 'src/background/index.js',
-        template: 'public/index.html',
-        filename: 'background.html',
-        title: 'Background',
-        chunks: ['chunk-vendors', 'chunk-common', 'background'],
+    options: {
+      template: 'public/browser-extension.html',
+      entry: './src/options/main.js',
+      title: 'Options'
     }
-}
-
-if (devtoolMode) {
-    config.pages['devtool'] = {
-        entry: 'src/devtool/index.js',
-        template: 'public/index.html',
-        filename: 'devtool.html',
-        title: 'Devtool',
+  },
+  pluginOptions: {
+    browserExtension: {
+      componentOptions: {
+        background: {
+          entry: 'src/background.js'
+        },
+        contentScripts: {
+          entries: {
+            'content-script': [
+              'src/content-scripts/content-script.js'
+            ]
+          }
+        }
+      }
     }
+  }
 }
-
-if (newtabMode) {
-    config.pages['newtab'] = {
-        entry: 'src/newtab/index.js',
-        template: 'public/index.html',
-        filename: 'newtab.html',
-        title: 'NewTab',
-    }
-}
-
-module.exports = config;

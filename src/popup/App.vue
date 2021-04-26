@@ -7,7 +7,7 @@
       size="330px"
     >
       <el-divider content-position="left">饼的发源地</el-divider>
-      <el-row type="flex" justify="center">
+      <el-row type="flex" justify="center" style="margin-top:10px">
         <el-button
           size="medium"
           type="primary"
@@ -181,9 +181,7 @@
 <script>
 export default {
   name: "app",
-  mounted() {
-    this.init()
-  },
+  mounted() {},
 
   data() {
     return {
@@ -197,7 +195,10 @@ export default {
       showAllImage: [],
     };
   },
-  computed: {},
+  mounted() {
+    this.init();
+  },
+  computed: { },
   methods: {
     init() {
       let state = this.$store.state;
@@ -222,7 +223,6 @@ export default {
       }
     },
     getbackgroundData() {
-      console.log(this.$store.state.cardListDM);
       this.cardlist = Object.values(this.$store.state.cardListDM)
         .reduce((acc, cur) => [...acc, ...cur], [])
         .map((x) => {
@@ -232,7 +232,7 @@ export default {
         .sort((x, y) => y.time - x.time);
     },
     reload() {
-      // this.getBackgroundPage.GetData();
+      browser.runtime.sendMessage({ info: "reload" });
       this.isReload = true;
       this.drawer = false;
       this.$message({

@@ -1,8 +1,28 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 import VuexWebExtensions from 'vuex-webextensions';
 
-Vue.use(Vuex);
+
+Vue.use(Vuex)
+
+let KazeFun = {
+    // 判断微博状态
+    weiboGetdynamicType(dynamic) {
+        // 0为视频 1为动态
+        let type = -1;
+        if (dynamic.hasOwnProperty("page_info") && dynamic.page_info.hasOwnProperty('type') && dynamic.page_info.type == "video") {
+            type = 0;
+        }
+        else {
+            type = 1;
+        }
+        return type;
+    },
+    // 处理微博内容
+    weiboRegexp(text) {
+        return text.replace(/<\a.*?>|<\/a>|<\/span>|<\span.*>|<span class="surl-text">|<span class='url-icon'>|<\img.*?>|全文|网页链接/g, '').replace(/<br \/>/g, '\n')
+    },
+}
 
 // mutations  同步修改 修改值
 // actions 异步 请求接口方法
@@ -11,7 +31,10 @@ Vue.use(Vuex);
 const actions = {
     // 获取数据
     Get({ commit, state }, opt) {
-        console.log(opt);
+        // 处理莫名其妙出现的payload
+        if (opt.hasOwnProperty('payload')) {
+            opt = opt.payload;
+        }
         try {
             return new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest();
@@ -34,7 +57,6 @@ const actions = {
                         resolve(state.cardListDM);
                     }
                 }
-                console.log(xhr);
                 xhr.send();
             })
 
@@ -54,33 +76,29 @@ const state = {
     },
     cardListDM: {},
     feedbackInfo: `<div>
-        <span>
-          如果有意见或建议或者是反馈问题或者是发现程序出现bug，可以添加<a
-            href="https://jq.qq.com/?_wv=1027&k=Vod1uO13"
-            >【蹲饼测试群】</a
-          >反馈或<a href="Mailto:kaze.liu@qq.com.com">给我发邮件</a>反馈<br />
-          也可以去github上查看<a
-            href="https://github.com/Enraged-Dun-Cookie-Development-Team/Dun-Cookie-Vue"
-            >Dun-Cookie-Vue</a
-          ><br />
-          也可以去Chrome应用商店查看更新，但是因为审核机制，更新速度会慢于QQ群和github
-          <br />
-          <br />
-          <div style="color: #aaa">
-            获取更新机制因为没钱买服务器，现在正在想办法
-          </div>
-        </span>
-      </div>`,
+      <span>
+        如果有意见或建议或者是反馈问题或者是发现程序出现bug，可以添加<a
+          href="https://jq.qq.com/?_wv=1027&k=Vod1uO13"
+          >【蹲饼测试群】</a
+        >反馈或<a href="Mailto:kaze.liu@qq.com.com">给我发邮件</a>反馈<br />
+        也可以去github上查看<a
+          href="https://github.com/Enraged-Dun-Cookie-Development-Team/Dun-Cookie-Vue"
+          >Dun-Cookie-Vue</a
+        ><br />
+        也可以去Chrome应用商店查看更新，但是因为审核机制，更新速度会慢于QQ群和github
+        <br />
+        <br />
+        <div style="color: #aaa">
+          获取更新机制因为没钱买服务器，现在正在想办法
+        </div>
+      </span>
+    </div>`,
     dunIndex: 0,
     dunTime: new Date(),
-    dunFristTime:new Date(),
+    dunFristTime: new Date(),
     version: '2.0.14 内测版',
     testIntervalTime: 1
 };
-
-const getters = {
-
-}
 
 const mutations = {
     processWeibo(state, opt) {
@@ -200,13 +218,19 @@ const mutations = {
     },
     // 修改蹲饼次数和时间
     dunDate(state) {
+        console.log(state.dunIndex);
         state.dunIndex++;
-        state.dunDate = new Date();
+        state.dunTime = new Date();
     },
     // 清除内容
     clearList(state, listName) {
         state.cardListDM[listName] = [];
     },
+    // 修改设置
+    changeSetting(state, settingDM) {
+        state.setting = Object.assign({},state.setting, settingDM);
+    },
+
     // 更换为测试模式
     changeToTest(state) {
         state.version = `${state.version}【已启用调试模式】 刷新时间临时调整为${state.testIntervalTime}秒`;
@@ -214,33 +238,11 @@ const mutations = {
     }
 };
 
-let KazeFun = {
-    // 判断微博状态
-    weiboGetdynamicType(dynamic) {
-        // 0为视频 1为动态
-        let type = -1;
-        if (dynamic.hasOwnProperty("page_info") && dynamic.page_info.hasOwnProperty('type') && dynamic.page_info.type == "video") {
-            type = 0;
-        }
-        else {
-            type = 1;
-        }
-        return type;
-    },
-    // 处理微博内容
-    weiboRegexp(text) {
-        return text.replace(/<\a.*?>|<\/a>|<\/span>|<\span.*>|<span class="surl-text">|<span class='url-icon'>|<\img.*?>|全文|网页链接/g, '').replace(/<br \/>/g, '\n')
-    },
-}
-
-const store = new Vuex.Store({
-    plugins: [VuexWebExtensions({
-        persistentStates: ['setting'],
-    })],
+export default new Vuex.Store({
     state,
     mutations,
     actions,
-    getters
-});
-
-export default store;
+    plugins: [VuexWebExtensions()],
+    modules: {
+    }
+})

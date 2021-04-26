@@ -16,7 +16,7 @@
         </div>
         <div class="info-time">本次蹲饼时间：{{ timespanToDay(dunTime) }}</div>
         <div class="info-time">
-          <!-- 下次蹲饼时间：{{ timespanToDay(nextdunTime) }} -->
+          下次蹲饼时间：{{ timespanToDay(nextdunTime) }}
         </div>
       </div>
       <el-divider></el-divider>
@@ -124,21 +124,25 @@ export default {
     init() {
       let state = this.$store.state;
       this.dunIndex = state.dunIndex;
+      this.dunTime = state.dunTime;
       this.version = state.version;
       this.feedbackInfo = state.feedbackInfo;
-      this.dunTime = state.dunTime;
       this.dunFristTime = state.dunFristTime;
       this.setting = state.setting;
-      
+
       setInterval(() => {
-        this.dunTime = state.dunTime;
         this.dunIndex = state.dunIndex;
+        this.dunTime = state.dunTime;
         this.nextdunTime = new Date(
           (Date.parse(this.dunTime) / 1000 + this.setting.time) * 1000
         );
-      }, this.setting.time);
+      }, this.setting.time * 1000);
+     
     },
     save() {
+      debugger;
+      this.$store.commit("changeSetting", this.setting);
+
       // chrome.storage.local.set(
       //   {
       //     setting: this.setting,
